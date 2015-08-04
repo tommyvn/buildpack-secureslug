@@ -1,0 +1,8 @@
+#!/bin/bash
+if [[ $1 == "encrypting" ]]; then
+  PASSPHRASE="this is a dummy password"
+  echo ${PASSPHRASE}
+  echo ${PASSPHRASE} | rev > $2
+elif [[ $1 == "decrypting" ]]; then
+  cat | rev
+fi
