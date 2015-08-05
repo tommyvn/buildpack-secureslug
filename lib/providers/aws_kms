@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# export AWS_REGION=${BUILD_AWS_REGION:=us-east-1}
-# export AWS_ACCESS_KEY_ID=${BUILD_AWS_ACCESS_KEY_ID}
-# export AWS_SECRET_ACCESS_KEY=${BUILD_AWS_SECRET_ACCESS_KEY}
-#  BUILD_AWS_KMS_KEY_ID
+# export AWS_REGION=${AWS_REGION:=us-east-1}
+# export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+# export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+#  AWS_KMS_KEY_ID
 
-export AWS_REGION=$(cat ${ENV_DIR}/BUILD_AWS_REGION)
-export AWS_ACCESS_KEY_ID=$(cat ${ENV_DIR}/AWS_ACCESS_KEY_ID)
-export AWS_SECRET_ACCESS_KEY=$(cat ${ENV_DIR}/AWS_SECRET_ACCESS_KEY)
-BUILD_AWS_KMS_KEY_ID=$(cat ${ENV_DIR}/BUILD_AWS_KMS_KEY_ID)
+export AWS_REGION=${AWS_REGION:=$(cat ${ENV_DIR}/AWS_REGION)}
+export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:=$(cat ${ENV_DIR}/AWS_ACCESS_KEY_ID)}
+export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:=$(cat ${ENV_DIR}/AWS_SECRET_ACCESS_KEY)}
+AWS_KMS_KEY_ID=${AWS_KMS_KEY_ID:=$(cat ${ENV_DIR}/AWS_KMS_KEY_ID)}
 
 if [[ $1 == "encrypting" ]]; then
-  KEY_DETAILS=$($(dirname $0)/aws_kms_lib/aws_kms generate-data-key --key-id ${BUILD_AWS_KMS_KEY_ID})
+  KEY_DETAILS=$($(dirname $0)/aws_kms_lib/aws_kms generate-data-key --key-id ${AWS_KMS_KEY_ID})
   echo "${KEY_DETAILS}" | python -c """import json;import sys;print json.load(sys.stdin)['CiphertextBlob']""" | base64 --decode > $2
   echo "${KEY_DETAILS}" | python -c """import json;import sys;print json.load(sys.stdin)['Plaintext']""" | base64 --decode
 elif [[ $1 == "decrypting" ]]; then
