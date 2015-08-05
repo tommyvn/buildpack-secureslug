@@ -11,9 +11,9 @@ export AWS_SECRET_ACCESS_KEY=$(cat ${ENV_DIR}/AWS_SECRET_ACCESS_KEY)
 BUILD_AWS_KMS_KEY_ID=$(cat ${ENV_DIR}/BUILD_AWS_KMS_KEY_ID)
 
 if [[ $1 == "encrypting" ]]; then
-  KEY_DETAILS=$(aws_kms_lib/aws_kms generate-data-key --key-id ${BUILD_AWS_KMS_KEY_ID})
+  KEY_DETAILS=$($(dirname $0)/aws_kms_lib/aws_kms generate-data-key --key-id ${BUILD_AWS_KMS_KEY_ID})
   echo "${KEY_DETAILS}" | python -c """import json;import sys;print json.load(sys.stdin)['CiphertextBlob']""" | base64 --decode > $2
   echo "${KEY_DETAILS}" | python -c """import json;import sys;print json.load(sys.stdin)['Plaintext']""" | base64 --decode
 elif [[ $1 == "decrypting" ]]; then
-  aws_kms_lib/aws_kms decrypt <(cat)
+  $(dirname $0)/aws_kms_lib/aws_kms decrypt <(cat)
 fi
