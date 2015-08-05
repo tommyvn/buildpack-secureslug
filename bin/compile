@@ -5,7 +5,7 @@ CACHE_DIR=$2
 export ENV_DIR=$3
 TMP_DIR=$(mktemp -d)
 APP_DIR=$TMP_DIR/app
-KEY_PROVIDER=${KEY_PROVIDER:=dummy}
+KEY_PROVIDER=$(cat ${ENV_DIR}/KEY_PROVIDER)
 
 mkdir ${APP_DIR}
 shopt -s dotglob nullglob
