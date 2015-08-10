@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# fail fast on errors
+set -e
+
 KEY_PROVIDER=${KEY_PROVIDER:=dummy}
 
 # move the encrypted tar and key to the work directory
