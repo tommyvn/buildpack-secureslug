@@ -7,6 +7,9 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 export ENV_DIR=$3
 
+BIN_DIR=$(cd $(dirname $0); pwd)
+ROOT_DIR=$(dirname $BIN_DIR)
+
 TMP_DIR=$(mktemp -d)
 APP_DIR=$TMP_DIR/app
 KEY_PROVIDER=${KEY_PROVIDER:=$(cat ${ENV_DIR}/KEY_PROVIDER)}
@@ -16,10 +19,10 @@ shopt -s dotglob nullglob
 mv ${BUILD_DIR}/* ${TMP_DIR}/app/
 tar -C ${TMP_DIR} -czf ${TMP_DIR}/slug.tgz ./app
 
-PASSPHRASE=$(lib/providers/${KEY_PROVIDER} encrypting ${BUILD_DIR}/encr_key)
+PASSPHRASE=$(${ROOT_DIR}/lib/providers/${KEY_PROVIDER} encrypting ${BUILD_DIR}/encr_key)
 gpg --output ${BUILD_DIR}/slug.tgz.gpg --symmetric --batch --no-tty --passphrase="${PASSPHRASE}" --no-use-agent $TMP_DIR/slug.tgz
 
-cp -a lib/decrypt_and_run.sh ${BUILD_DIR}/
-cp -a lib ${BUILD_DIR}/
+cp -a ${ROOT_DIR}/lib/decrypt_and_run.sh ${BUILD_DIR}/
+cp -a ${ROOT_DIR}/lib ${BUILD_DIR}/
 cp ${TMP_DIR}/app/passphrase ${BUILD_DIR}/
 echo "web: ./decrypt_and_run.sh" > ${BUILD_DIR}/Procfile
