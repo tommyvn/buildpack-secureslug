@@ -7,7 +7,7 @@ work_dir=$1
 encrypted_slug=$1/slug.tgz.gpg
 decrypted_slug=${encrypted_slug%.gpg}
 
-key_provider=${SLUG_key_provider:=${key_provider:=dummy}}
+KEY_PROVIDER=${SLUG_KEY_PROVIDER:=${KEY_PROVIDER:=dummy}}
 
 PASSPHRASE=$(cat ${work_dir}/encr_key | ${work_dir}/lib/providers/${key_provider} decrypting)
 
