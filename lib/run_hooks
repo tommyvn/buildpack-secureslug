@@ -4,7 +4,6 @@
 set -e
 
 # normalise to fill path
-hook_dir=$(cd $(dirname $0)/hooks ; pwd)
 work_dir=$(cd $(dirname $0)/.. ; pwd)
 app_dir=${1:=/app}
 
@@ -13,7 +12,7 @@ export PLATFORM
 echo "platform detected as ${PLATFORM}"
 
 shopt -s nullglob
-for hook in ${hook_dir}/*.hook ; do
+for hook in ${work_dir}/hooks/*.hook ; do
   echo "running $(basename $hook)"
-  source $hook $work_dir $app_dir
+  source ${work_dir}/hooks/${hook} ${work_dir} ${app_dir}
 done
