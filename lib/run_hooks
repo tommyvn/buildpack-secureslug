@@ -7,8 +7,12 @@ set -e
 work_dir=$(cd $(dirname $0)/.. ; pwd)
 app_dir=${1:=/app}
 
-[[ ${work_dir} != ${app_dir} ]] && PLATFORM="drie" || PLATFORM="heroku"
-export PLATFORM
+if [[ -z ${PLATFORM+x} && ${work_dir} != ${app_dir} ]] ; then
+  export PLATFORM="drie"
+elif [[ -z ${PLATFORM+x} ]] ; then
+  export PLATFORM="heroku"
+fi
+
 echo "platform detected as ${PLATFORM}"
 
 shopt -s nullglob
