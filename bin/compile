@@ -16,7 +16,7 @@ KEY_PROVIDER=${KEY_PROVIDER:=$(cat ${ENV_DIR}/KEY_PROVIDER)}
 
 mkdir ${APP_DIR}
 shopt -s dotglob nullglob
-mv ${BUILD_DIR}/* ${TMP_DIR}/app/
+mv ${BUILD_DIR}/* ${APP_DIR}/
 tar -C ${TMP_DIR} -czf ${TMP_DIR}/slug.tgz ./app
 
 PASSPHRASE=$(${ROOT_DIR}/lib/providers/${KEY_PROVIDER} encrypting ${BUILD_DIR}/encr_key)
@@ -25,4 +25,4 @@ gpg --output ${BUILD_DIR}/slug.tgz.gpg --symmetric --batch --no-tty --passphrase
 cp -a ${ROOT_DIR}/lib/decrypt_and_run.sh ${BUILD_DIR}/
 cp -a ${ROOT_DIR}/lib ${BUILD_DIR}/
 cp ${TMP_DIR}/app/passphrase ${BUILD_DIR}/
-echo "web: ./decrypt_and_run.sh" > ${BUILD_DIR}/Procfile
+cat ${APP_DIR}/Procfile | awk -F ':' '{print $1": ./decrypt_and_run.sh "$1}' > ${BUILD_DIR}/Procfile
