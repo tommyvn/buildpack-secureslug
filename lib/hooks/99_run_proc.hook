@@ -17,4 +17,6 @@ fi
 
 source .profile.d/*
 
-exec $(cat Procfile | grep ^"${PROC}:" | cut -f 2- -d ':')
+app=$(cat Procfile | grep ^"${PROC}:" | cut -f 2- -d ':')
+
+exec $app

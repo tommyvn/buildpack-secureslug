@@ -12,7 +12,8 @@ export PLATFORM
 echo "platform detected as ${PLATFORM}"
 
 shopt -s nullglob
-for hook in ${work_dir}/hooks/*.hook ; do
+for hook_path in ${work_dir}/lib/hooks/*.hook ; do
+  hook=$(basename $hook_path)
   echo "running $(basename $hook)"
-  source ${work_dir}/hooks/${hook} ${work_dir} ${app_dir}
+  source ${work_dir}/lib/hooks/${hook} ${work_dir} ${app_dir}
 done
