@@ -3,6 +3,15 @@
 # fail fast on errors
 set -e
 
+indent() {
+  sed "s/^/       /"
+}
+
+puts-step() {
+  echo "-----> $@"
+}
+
+
 BUILD_DIR=$1
 CACHE_DIR=$2
 export ENV_DIR=$3
@@ -16,13 +25,14 @@ KEY_PROVIDER=${KEY_PROVIDER:=$(cat ${ENV_DIR}/KEY_PROVIDER)}
 
 mkdir ${APP_DIR}
 shopt -s dotglob nullglob
+puts-step "Creating inner slug"
 mv ${BUILD_DIR}/* ${APP_DIR}/
 tar -C ${TMP_DIR} -czf ${TMP_DIR}/slug.tgz ./app
 
+puts-step "Encrypting inner slug with ${KEY_PROVIDER} provider"
 PASSPHRASE=$(${ROOT_DIR}/lib/providers/${KEY_PROVIDER} encrypting ${BUILD_DIR}/encr_key)
-gpg --output ${BUILD_DIR}/slug.tgz.gpg --symmetric --batch --no-tty --passphrase="${PASSPHRASE}" --no-use-agent $TMP_DIR/slug.tgz
+gpg --output ${BUILD_DIR}/slug.tgz.gpg --symmetric --batch --no-tty --passphrase="${PASSPHRASE}" --no-use-agent $TMP_DIR/slug.tgz |& indent
 
-cp -a ${ROOT_DIR}/lib/decrypt_and_run.sh ${BUILD_DIR}/
+puts-step "Creating outer slug"
 cp -a ${ROOT_DIR}/lib ${BUILD_DIR}/
-cp ${TMP_DIR}/app/passphrase ${BUILD_DIR}/
-cat ${APP_DIR}/Procfile | awk -F ':' '{print $1": ./decrypt_and_run.sh "$1}' > ${BUILD_DIR}/Procfile
+cat ${APP_DIR}/Procfile | awk -F ':' '{print $1": ./lib/decrypt_and_run.sh "$1}' > ${BUILD_DIR}/Procfile
