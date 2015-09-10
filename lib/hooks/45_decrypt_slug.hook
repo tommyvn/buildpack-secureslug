@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# fail fast on errors
+set -e
+
+work_dir=$1
+encrypted_slug=$1/slug.tgz.gpg
+decrypted_slug=${encrypted_slug%.gpg}
+
+key_provider=${SLUG_key_provider:=${key_provider:=dummy}}
+
+PASSPHRASE=$(cat ${work_dir}/encr_key | ${work_dir}/lib/providers/${key_provider} decrypting)
+
+gpg --batch --no-tty --no-use-agent --passphrase="${PASSPHRASE}" --output ${decrypted_slug} -d ${encrypted_slug}
+rm ${encrypted_slug}

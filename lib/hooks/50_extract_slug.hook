@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# fail fast on errors
+set -e
+
+work_dir=$1
+app_dir=$2
+
+if [[ ${PLATFORM} == "heroku" ]] ; then
+    shopt -s dotglob nullglob
+    ENCR_APP=$(mktemp -d)
+    mv ${work_dir}/* ${ENCR_APP}/
+    export work_dir=${ENCR_APP}
+fi
+
+if [[ ${PLATFORM} == "drie" || ${PLATFORM} == "heroku" ]] ; then
+    tar -xzf ${work_dir}/slug.tgz --strip 2 -C ${app_dir}/ ./app/
+else
+    echo "unknown platform!!"
+    exit 1
+fi

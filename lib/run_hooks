@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# fail fast on errors
+set -e
+
+# normalise to fill path
+hook_dir=$(cd $(dirname $0)/hooks ; pwd)
+work_dir=$(cd $(dirname $0)/.. ; pwd)
+app_dir=${1:=/app}
+
+[[ ${work_dir} != ${app_dir} ]] && PLATFORM="drie" || PLATFORM="heroku"
+export PLATFORM
+
+shopt -s nullglob
+for hook in ${hook_dir}/*.hook ; do
+  echo "running $(basename $hook)"
+  source $hook $work_dir $app_dir
+done

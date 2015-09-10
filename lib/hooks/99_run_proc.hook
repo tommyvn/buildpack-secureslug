@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# fail fast on errors
+set -e
+
+work_dir=$1
+app_dir=$2
+
+rm -fr $work_dir
+cd $app_dir
+
+if [[ ${PLATFORM} == "heroku" ]] ; then
+    PROC=${DYNO%.*}
+else
+    PROC=${PROC_TYPE:=web}
+fi
+
+source .profile.d/*
+
+exec $(cat Procfile | grep ^"${PROC}:" | cut -f 2- -d ':')
