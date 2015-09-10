@@ -10,6 +10,7 @@ app_dir=${1:=/app}
 
 [[ ${work_dir} != ${app_dir} ]] && PLATFORM="drie" || PLATFORM="heroku"
 export PLATFORM
+echo "platform detected as ${PLATFORM}"
 
 shopt -s nullglob
 for hook in ${hook_dir}/*.hook ; do
