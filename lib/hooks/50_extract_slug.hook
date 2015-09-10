@@ -7,6 +7,7 @@ work_dir=$1
 app_dir=$2
 
 if [[ ${PLATFORM} == "heroku" ]] ; then
+    echo "Heroku detected, swapping workspaces around"
     shopt -s dotglob nullglob
     ENCR_APP=$(mktemp -d)
     mv ${work_dir}/* ${ENCR_APP}/
