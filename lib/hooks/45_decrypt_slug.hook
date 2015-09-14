@@ -8,8 +8,10 @@ encrypted_slug=$1/slug.tgz.gpg
 decrypted_slug=${encrypted_slug%.gpg}
 
 key_provider=${SLUG_KEY_PROVIDER:=${KEY_PROVIDER:=dummy}}
-
+puts-step "retrieving key from ${key_provider}"
+{
 PASSPHRASE=$(cat ${work_dir}/encr_key | ${work_dir}/lib/providers/${key_provider} decrypting)
 
 gpg --batch --no-tty --no-use-agent --passphrase="${PASSPHRASE}" --output ${decrypted_slug} -d ${encrypted_slug}
 rm ${encrypted_slug}
+} |& indent

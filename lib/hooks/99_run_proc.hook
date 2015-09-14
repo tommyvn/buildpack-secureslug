@@ -6,14 +6,14 @@ set -e
 work_dir=$1
 app_dir=$2
 
-rm -fr $work_dir
-cd $app_dir
+rm -fr ${work_dir}
 
 if [[ ${PLATFORM} == "heroku" ]] ; then
     PROC=${DYNO%.*}
 else
     PROC=${PROC_TYPE:=web}
 fi
+puts-step "detected proc type as ${PROC}"
 
 source .profile.d/*
 

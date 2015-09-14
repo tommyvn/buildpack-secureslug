@@ -13,11 +13,23 @@ elif [[ -z ${PLATFORM+x} ]] ; then
   export PLATFORM="heroku"
 fi
 
-echo "platform detected as ${PLATFORM}"
+indent() {
+  sed "s/^/       /"
+}
+
+puts-stage() {
+  echo "=====> $@"
+}
+
+puts-step() {
+  echo "-----> $@"
+}
+
+puts-stage "platform detected as ${PLATFORM}"
 
 shopt -s nullglob
 for hook_path in ${work_dir}/lib/hooks/*.hook ; do
   hook=$(basename $hook_path)
-  echo "running $(basename $hook)"
+  puts-stage "running $(basename $hook)"
   source ${work_dir}/lib/hooks/${hook} ${work_dir} ${app_dir}
 done
