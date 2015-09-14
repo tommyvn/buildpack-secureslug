@@ -6,18 +6,11 @@ set -e
 work_dir=$1
 app_dir=$2
 
-if [[ ${PLATFORM} == "heroku" ]] ; then
-    puts-step "Swapping workspaces around"
-    shopt -s dotglob nullglob
-    ENCR_APP=$(mktemp -d)
-    mv ${work_dir}/* ${ENCR_APP}/
-    export work_dir=${ENCR_APP}
-fi
+puts-step "Swapping workspaces around"
+shopt -s dotglob nullglob
+ENCR_APP=$(mktemp -d)
+mv ${work_dir}/* ${ENCR_APP}/
+export work_dir=${ENCR_APP}
 
-if [[ ${PLATFORM} == "drie" || ${PLATFORM} == "heroku" ]] ; then
-    puts-step "extracting decrypted slug"
-    tar -xzf ${work_dir}/slug.tgz --strip 2 -C ${app_dir}/ ./app/ |& indent
-else
-    echo "unknown platform!!"
-    exit 1
-fi
+puts-step "extracting decrypted slug"
+tar -xzf ${work_dir}/slug.tgz --strip 2 -C ${app_dir}/ ./app/ |& indent
