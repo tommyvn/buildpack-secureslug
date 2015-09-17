@@ -12,6 +12,6 @@ puts-step "retrieving key from ${key_provider}"
 {
 PASSPHRASE=$(cat ${work_dir}/encr_key | ${work_dir}/lib/providers/${key_provider} decrypting)
 
-gpg --batch --no-tty --no-use-agent --passphrase="${PASSPHRASE}" --output ${decrypted_slug} -d ${encrypted_slug}
+gpg --batch --no-tty --no-use-agent --quiet --passphrase="${PASSPHRASE}" --output ${decrypted_slug} -d ${encrypted_slug}
 rm ${encrypted_slug}
 } |& indent
