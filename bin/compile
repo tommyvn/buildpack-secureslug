@@ -19,19 +19,14 @@ export ENV_DIR=$3
 BIN_DIR=$(cd $(dirname $0); pwd)
 ROOT_DIR=$(dirname $BIN_DIR)
 
-TMP_DIR=$(mktemp -d)
-APP_DIR=$TMP_DIR/app
+APP_DIR=$(mktemp -d)
 KEY_PROVIDER=${KEY_PROVIDER:=$(cat ${ENV_DIR}/KEY_PROVIDER)}
 
-mkdir ${APP_DIR}
 shopt -s dotglob nullglob
-puts-step "Creating inner slug"
+puts-step "Creating encrypted inner slug using ${KEY_PROVIDER} provider"
 mv ${BUILD_DIR}/* ${APP_DIR}/
-tar -C ${TMP_DIR} -czf ${TMP_DIR}/slug.tgz ./app
-
-puts-step "Encrypting inner slug with ${KEY_PROVIDER} provider"
 PASSPHRASE=$(${ROOT_DIR}/lib/providers/${KEY_PROVIDER} encrypting ${BUILD_DIR}/encr_key)
-gpg --output ${BUILD_DIR}/slug.tgz.gpg --cipher-algo AES256 --quiet --symmetric --batch --no-tty --passphrase="${PASSPHRASE}" --no-use-agent $TMP_DIR/slug.tgz |& indent
+tar -C ${APP_DIR} -czf - ./ | gpg --output ${BUILD_DIR}/slug.tgz.gpg --cipher-algo AES256 --quiet --symmetric --batch --no-tty --passphrase="${PASSPHRASE}" --no-use-agent - |& indent
 
 puts-step "Creating outer slug"
 cp -a ${ROOT_DIR}/lib ${BUILD_DIR}/

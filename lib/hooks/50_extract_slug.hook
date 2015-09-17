@@ -13,4 +13,4 @@ mv ${work_dir}/* ${ENCR_APP}/
 export work_dir=${ENCR_APP}
 
 puts-step "extracting decrypted slug"
-tar -xzf ${work_dir}/slug.tgz --strip 2 -C ${app_dir}/ ./app/ |& indent
+tar -xzf ${work_dir}/slug.tgz -C ${app_dir}/ |& indent
