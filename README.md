@@ -22,6 +22,6 @@ Set the key provider to aws\_kms
 heroku config:set KEY_PROVIDER=aws_kms
 ```
 
-From this point on your app will be encrypted at build time and decrypted at deploy time using your KMS key.
+From this point on your app will be encrypted at build time and decrypted at deploy time using your KMS key and all your log lines will be prepended with a sha256 hash of the combination of your kms key and the log line.
 
-You can see key access during deploys in CloudTrail and revoke keys to block deploys but because the data keys are used your customer key is never exposed to the PaaS, giving you an audit trial and the ability to revoke your key and prevent further access to your slug.
+You can see key access during deploys in CloudTrail and revoke keys to block deploys but because the data keys are used your customer key is only transiently exposed to the PaaS, giving you an audit trial for decryption actions and the ability to revoke your key and prevent further access to your slug.
