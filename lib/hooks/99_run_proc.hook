@@ -8,13 +8,6 @@ app_dir=$2
 
 rm -fr ${work_dir}
 
-if [[ ${PLATFORM} == "heroku" ]] ; then
-    PROC=${DYNO%.*}
-else
-    PROC=${PROC_TYPE:=web}
-fi
-puts-step "detected proc type as ${PROC}"
-
 source .profile.d/*
 
 app=$(cat Procfile | grep ^"${PROC}:" | cut -f 2- -d ':')
