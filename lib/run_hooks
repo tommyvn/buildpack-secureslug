@@ -3,13 +3,11 @@
 # fail fast on errors
 set -e
 
-# normalise to fill path
+# normalise to full path
 work_dir=$(cd $(dirname $0)/.. ; pwd)
 app_dir=${1:=/app}
 
-if [[ -z ${PLATFORM+x} && ${work_dir} != ${app_dir} ]] ; then
-  export PLATFORM="drie"
-elif [[ -z ${PLATFORM+x} ]] ; then
+if [[ -z ${PLATFORM+x} ]] ; then
   export PLATFORM="heroku"
 fi
 
@@ -25,7 +23,7 @@ puts-step() {
   echo "-----> $@"
 }
 
-puts-stage "platform detected as ${PLATFORM}"
+puts-stage "platform is ${PLATFORM}"
 
 shopt -s nullglob
 for hook_path in ${work_dir}/lib/hooks/*.hook ; do
