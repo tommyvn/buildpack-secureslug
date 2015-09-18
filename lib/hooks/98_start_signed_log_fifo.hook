@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# fail fast on errors
+set -e
+
+mkfifo /tmp/d-stdout.fifo
+mkfifo /tmp/d-stderr.fifo
+
+key_provider=${LOGGING_KEY_PROVIDER:=${KEY_PROVIDER:=dummy}}
+puts-step "retrieving logging key from ${key_provider}"
+{
+PASSPHRASE=$(cat ${work_dir}/encr_key | ${work_dir}/lib/providers/${key_provider} decrypting)
+} |& indent
+
+log-stdout() {
+  while read line ; do
+    signature=$(echo ${PASSPHRASE}:$line | sha256sum | awk '{print $1}')
+    echo "$signature:$line"
+  done
+}
+
+log-stderr() {
+  cat | log-stdout >&2
+}
+
+cat /tmp/d-stdout.fifo | log-stdout &
+cat /tmp/d-stderr.fifo | log-stderr &

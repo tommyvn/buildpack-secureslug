@@ -12,4 +12,7 @@ source .profile.d/*
 
 app=$(cat Procfile | grep ^"${PROC}:" | cut -f 2- -d ':')
 
-exec $app
+
+# FIXME: the container terminates before all the logs have been flushed to the fifos.
+#        we somehow need to wait
+exec $app >/tmp/d-stdout.fifo 2>/tmp/d-stderr.fifo
