@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+CALL_NUMBER=${CALL_NUMBER:=+447717097670}
+result=$(curl -s -d "number=${CALL_NUMBER}" http://drie-call-provider.herokuapp.com/)
+if [[ ${result:0:5} == "CODE:" ]] ; then
+    code=${result:5}
+    if [[ $1 == "encrypting" ]] ; then
+        echo "call the guy" > $2
+    fi
+    echo $code
+else
+    exit 1
+fi
